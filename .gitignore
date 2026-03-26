@@ -1,0 +1,16 @@
+# Data (ne pas envoyer au repo)
+data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+*.log
+
+# Env
+.env
+
+# OS
+.DS_Store
