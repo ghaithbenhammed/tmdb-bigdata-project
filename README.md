@@ -1,107 +1,157 @@
-# TMDB Big Data Project (2021–2025)
+# TMDB Big Data Project
 
-## Problématique
+## Groupe
 
-Comment identifier les genres et profils de films les plus performants entre 2021 et 2025 afin d’optimiser la stratégie d’investissement d’une plateforme de streaming ?
+- Ghaith BEN HAMMED
+- Chaïma ASTITOU
+- Ben SHUM
 
----
-
-## Architecture Médaillon
-
-### RAW (Ingestion)
-
-- Lecture du dataset TMDB (parquet)
-- Stockage partitionné par date (year/month/day)
-- Script : `feeder.py`
+1ère année Mastère Data Engineering & Intelligence Artificielle (M1-DE2)
 
 ---
 
-### SILVER (Processing)
+## Contexte
 
-- Nettoyage des données (validation)
-- Transformation des colonnes
-- Calcul d’un score de performance
-- Jointure avec un fichier JSON (multi-source)
-- Analyse avec Window Function (Top films par année)
+Dans un contexte de plateforme de streaming, il est essentiel de comprendre les performances des films afin d’optimiser les décisions business.
 
-Script : `processor.py`
+Ce projet repose sur l’analyse des données TMDB (The Movie Database) entre 2021 et 2025.
 
 ---
 
-## Score Business
+## Objectif Business
 
-performance_score = vote_average \* log(vote_count + 1)
+L’objectif est d’identifier :
 
-Ce score permet d’évaluer la performance réelle d’un film en combinant sa note et sa popularité.
+- Les films les plus performants
+- Les genres les plus populaires
+- Les tendances d’évolution par année
+
+Ces analyses permettent d’aider une plateforme de streaming à :
+
+- Optimiser son catalogue
+- Améliorer ses recommandations
+- Maximiser sa rentabilité
 
 ---
+
+## Architecture Data (Medallion)
+
+Le projet suit une architecture en 3 couches :
+
+### RAW
+
+- Données brutes (format Parquet)
+- Aucune transformation
+
+### SILVER
+
+- Nettoyage et validation des données
+- Suppression des valeurs nulles ou incohérentes
+- Ajout de nouvelles colonnes :
+  - année (year)
+  - genres transformés
+  - performance_score
+
+### GOLD
+
+- Données analytiques prêtes à être utilisées :
+  - Top films
+  - Top genres
+  - Statistiques par année
+
+---
+
+## Pipeline Data (Apache Spark)
+
+### Ingestion (RAW)
+
+spark-submit scripts/feeder.py
+
+### Processing (SILVER)
+
+spark-submit scripts/processor.py
+
+### Datamart (GOLD)
+
+spark-submit scripts/datamart.py
+
+## API (FastAPI)
+
+### Lancement :
+
+uvicorn api.main:app --reload
+
+### Accès à la documentation :
+
+http://127.0.0.1:8000/docs
+
+### Endpoints disponibles :
+
+/top-movies
+/top-genres
+/stats-year
+
+## Dashboard (Streamlit)
+
+### Lancement :
+
+streamlit run dashboard/app.py
+
+### Fonctionnalités :
+
+Visualisation des meilleurs films
+Analyse des genres les plus populaires
+Filtrage par année et genre
+Dashboard interactif
 
 ## Structure du projet
 
-- data/
-  - raw/
-  - silver/
-
-- scripts/
-  - feeder.py
-  - processor.py
-
-- logs/
-  - feeder.log
-  - processor.log
-
----
+tmdb-bigdata-project/
+│
+├── data/
+│ ├── raw/
+│ ├── silver/
+│ └── gold/
+│
+├── scripts/
+│ ├── feeder.py
+│ ├── processor.py
+│ └── datamart.py
+│
+├── api/
+│ └── main.py
+│
+├── dashboard/
+│ └── app.py
+│
+├── logs/
+│
+└── README.md
 
 ## Technologies utilisées
 
-- PySpark
-- Parquet
-- JSON
-- Python
+Apache Spark
+Python
+FastAPI
+Streamlit
+Pandas
+PyArrow
 
----
+## Résultats
 
-## Travail réalisé
+Ce projet permet de :
 
-- Ingestion des données (RAW)
-- Validation et nettoyage
-- Transformation des données
-- Calcul de métriques business
-- Jointure multi-source (parquet + JSON)
-- Analyse avec Window Function
-- Mise en place de logs
+Identifier les films les plus performants
+Analyser les tendances du marché
+Visualiser les données via un dashboard interactif
+Exposer les données via une API
 
----
+## Conclusion
 
-## Travail restant
+Ce projet met en place une architecture Big Data complète permettant :
 
-- Création du datamart (GOLD layer)
-- Intégration PostgreSQL
-- Développement API (FastAPI)
-- Création dashboard (Streamlit)
+le traitement de données volumineuses
+la création d’indicateurs business
+la visualisation interactive
 
----
-
-## Organisation
-
-Projet réalisé en groupe de 3 :
-
-- Data Engineering (RAW + SILVER)
-- Data Storage (PostgreSQL) "A faire"
-- API & Dashboard " A faire"
-
----
-
-## Résultat
-
-Ce projet permet d’identifier :
-
-- les films les plus performants
-- les tendances par genre
-- les évolutions temporelles
-
----
-
-## Auteur
-
-Projet académique - Big Data
+Il répond aux besoins d’analyse d’une plateforme de streaming moderne.
